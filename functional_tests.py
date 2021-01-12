@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
 import unittest
 
 
@@ -22,17 +24,28 @@ class NewVisitorTest(unittest.TestCase):
         # Она видит, что заголовок и шапка страницы говорят о
         # списках неотложных дел
         self.assertIn('To-Do', self.browser.title)
-        self.fail('Закончить тест!')
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('To-Do', header_text)
 
         # Ей сразу же прелагается ввести элемент списка
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        self.assertEqual(inputbox.get_attribute('placeholder'), 'Enter a to-do item')
 
         # Она набирает в текстовом поле "Купить павлинья перья (ее хобби -
         # вязание рыболовных мушек)
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
-        # Когда она нажимает enter, страница обновляется, и теперь страница
-        # содержит "1: Купить павлиньи перья" в каечтсве элемента списка
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.browser.find_elements_by_tag_name('tr')
+        self.assertTrue(any(row.Text == '1: Купить павлиньи перья' for row in rows))
 
-        # бла-бла-бла
+        # Текстовое поле по-прежнему приглашает ее добавить еще один элемент.
+        # Она вводит "Сделать мушку из павлиньих перьев"
+        # (Эдит очень методична)
+
+        self.fail('Закончить тест!')
+
 
         # Удовлетворенная она снова ложится спать
 
